@@ -130,17 +130,12 @@
 			this.messageHub = new FramesMessageHub();
 			
 			this.layout.registerComponent( 'Database', function( container, componentState ){
-				container.getElement().html('<iframe src="../ide-database/explorer/explorer.html"></iframe>');
+				container.getElement().html('<iframe src="explorer/explorer.html"></iframe>');
 			});
 			this.layout.registerComponent( 'Editor', function( container, componentState ){
 				this.setContent = function(path){
-					if (path) {
-						container.getElement().empty().html( '<iframe src="../ide-editor-orion/editor.html?file='+path+'"></iframe>' );
-					} else {
-						container.setTitle( 'Welcome' );
-						container.getElement().empty().html( '<iframe src="welcome.html"></iframe>' );
-					}
-					
+					container.setTitle( 'SQL' );
+					container.getElement().empty().html( '<iframe src="sql/editor.html"></iframe>' );
 				};
 				this.setContent(componentState.path);
 			});

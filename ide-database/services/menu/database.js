@@ -21,7 +21,7 @@ exports.getMenu = function() {
 					"name":"Properties",
 					"link":"#",
 					"order":"110",
-					"onClick":"alert('Import has been clicked')"
+					"onClick":"alert('Properties has been clicked')"
 				}
 			]
 		};
