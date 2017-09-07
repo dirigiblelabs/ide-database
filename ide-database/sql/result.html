@@ -30,7 +30,7 @@
 	<!-- Custom IDE Styles -->
 	<link type="text/css" rel="stylesheet" href="/services/v3/core/theme/ide.css" />
 	
-	<script src="../ide/ui/message-hub.js"></script>
+	<script src="../../ide/ui/message-hub.js"></script>
 	
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -41,8 +41,8 @@
 </head>
 
 <body ng-app="database-table" ng-controller="DatabaseTableController">
-
-        <table class="table table-striped">
+        <h4 ng-show="result">{{result}}</h4>
+        <table class="table table-striped" ng-show="columns">
                 <thead>
                   <tr>
                     <th ng-repeat="colum in columns">{{colum}}</th>
@@ -61,25 +61,44 @@
     var messageHub = new FramesMessageHub();
 
     messageHub.subscribe(function(command){
-            console.log(command.data.toLowerCase().startsWith('select'));
-
-            // TODO Add switch based on Query/Execute statements
-            $http({
-                method: 'POST',
-                url: "/services/v3/ide/databases/derby/DefaultDB/query",
-                data: command.data,
-                headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
-            }).success(function(rows) {
-                $scope.rows = rows;
-                $scope.columns = [];
-                for (var i = 0 ; i < rows.length; i ++) {
-                    for (var column in rows[i]) {
-                        $scope.columns.push(column);
+            if (command.data.toLowerCase().startsWith('select')) {
+                $http({
+                    method: 'POST',
+                    url: "/services/v3/ide/databases/derby/DefaultDB/query",
+                    data: command.data,
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+                }).success(function(rows) {
+                    cleanScope();
+                    $scope.rows = rows;
+                    $scope.columns = [];
+                    for (var i = 0 ; i < rows.length; i ++) {
+                        for (var column in rows[i]) {
+                            $scope.columns.push(column);
+                        }
+                        break;
                     }
-                    break;
-                }
-            });
+                });
+            } else {
+                $http({
+                    method: 'POST',
+                    url: "/services/v3/ide/databases/derby/DefaultDB/update",
+                    data: command.data,
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8', 'Accept': 'text/plain'}
+                }).success(function(result) {
+                    cleanScope();
+                    if (!isNaN(result)) {
+                        result = 'Rows updated: ' + result;
+                    }
+                    $scope.result = result;
+                });
+            }
         }, "database.sql.execute");
+
+        function cleanScope() {
+            $scope.result = null;
+            $scope.columns = null;
+            $scope.rows = null;
+        }
     });
 </script>
 </body>
