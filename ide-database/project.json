@@ -1,1 +1,8 @@
-{"guid":"ide-database","repository":{"type":"git","branch":"master","url":"https://github.com/dirigiblelabs/ide-database.git"}}
+{
+	"guid": "ide-database",
+	"repository": {
+		"type": "git",
+		"branch": "master",
+		"url": "https://github.com/dirigiblelabs/ide-database.git"
+	}
+}
