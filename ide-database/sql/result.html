@@ -89,10 +89,7 @@
 						method: 'POST',
 						url: url + "/query",
 						data: command.data,
-						headers: {
-							'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-							'Accept': 'application/json, application/text'
-						}
+						headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
 					}).success(function(result) {
 						cleanScope();
 						if (result != null && result.length > 0) {
