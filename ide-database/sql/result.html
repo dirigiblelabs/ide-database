@@ -83,7 +83,7 @@
 		    }, "database.datasource.selection.changed");
 
 			messageHub.subscribe(function(command) {
-				var url = "/services/v3/ide/databases/" + $scope.database + "/" + $scope.datasource;
+				var url = "../../../../../services/v3/ide/databases/" + $scope.database + "/" + $scope.datasource;
 				if (command.data.toLowerCase().startsWith('select')) {
 					$http({
 						method: 'POST',
