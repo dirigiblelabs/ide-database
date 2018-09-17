@@ -114,6 +114,21 @@ angular.module('database', []).controller('DatabaseController', function ($scope
 // 								messageHub.fireFileOpen(data[0].original._file);
 						  })
 						  .on('open_node.jstree', function(evt, data) {
+						  	if (data.node.children.length === 1 && $('.database').jstree().get_node(data.node.children[0]).original === "Loading Columns...") {
+						  		var position = 'first';
+  								var parent = $('.database').jstree().get_node(data.node);
+  								
+  								var newNode = { state: "open", data: {"text":"new node", "icon": "fa fa-th-large"}};
+								
+								$('.database').jstree("delete_node", $('.database').jstree().get_node(data.node.children[0]));
+								
+  								$('.database').jstree("create_node", parent, newNode, position, false, false);
+  								
+  								
+  								
+  								
+						  		console.log('open node');	
+						  	}
 							//data.instance.set_icon(data.node, 'fa fa-folder-open-o');
 						  })
 						  .on('close_node.jstree', function(evt, data) {
@@ -137,9 +152,15 @@ angular.module('database', []).controller('DatabaseController', function ($scope
 			});
 			icon = 'fa fa-database';
 		} else if(f.kind=='table') {
-			children = f.columns.map(function(_column){
-				return build(_column)
-			});
+			//children = ['Loading...'];
+			children = [
+				{text:"Columns", "icon": "fa fa-th-large", children: ['Loading Columns...']},
+				{text:"Indices", "icon": "fa fa-sort-amount-desc", children: ['Loading Indices...']},
+			];
+			
+//			f.columns.map(function(_column){
+//				return build(_column)
+//			});
 			icon = 'fa fa-table';
 		} else if(f.kind=='column') {
 			icon = 'fa fa-th-large';
