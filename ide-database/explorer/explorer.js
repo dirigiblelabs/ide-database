@@ -115,20 +115,43 @@ angular.module('database', []).controller('DatabaseController', function ($scope
 						  })
 						  .on('open_node.jstree', function(evt, data) {
 						  	if (data.node.children.length === 1 && $('.database').jstree().get_node(data.node.children[0]).original === "Loading Columns...") {
-						  		var position = 'first';
-  								var parent = $('.database').jstree().get_node(data.node);
-  								
-  								var newNode = { state: "open", data: {"text":"new node", "icon": "fa fa-th-large"}};
-								
-								$('.database').jstree("delete_node", $('.database').jstree().get_node(data.node.children[0]));
-								
-  								$('.database').jstree("create_node", parent, newNode, position, false, false);
-  								
-  								
-  								
-  								
-						  		console.log('open node');	
+						  		
+						  		var parent = $('.database').jstree().get_node(data.node);
+						  		var tableParent = $('.database').jstree().get_node(data.node.parent);
+						  		var schemaParent = $('.database').jstree().get_node(tableParent.parent);
+						  		
+						  		$('.database').jstree("delete_node", $('.database').jstree().get_node(data.node.children[0]));
+						  		var position = 'last';
+						  		
+						  		$http.get(databasesSvcUrl + '/' + $scope.selectedDatabase + '/' + $scope.selectedDatasource
+						  			+ '/' + schemaParent.text + '/' + tableParent.text)
+									.success(function(data) {
+										data.columns.forEach(function(column) {
+											var nodeText = column.name + ':' + column.type + "(" + column.size + ")";
+  											var newNode = { state: "open", "text": nodeText, "id": column.name, "icon": "fa fa-th-large"};
+  											var child = $('.database').jstree("create_node", parent, newNode, position, false, false);
+										})
+									});
+						  	} else if (data.node.children.length === 1 && $('.database').jstree().get_node(data.node.children[0]).original === "Loading Indices...") {
+						  		
+						  		var parent = $('.database').jstree().get_node(data.node);
+						  		var tableParent = $('.database').jstree().get_node(data.node.parent);
+						  		var schemaParent = $('.database').jstree().get_node(tableParent.parent);
+						  		
+						  		$('.database').jstree("delete_node", $('.database').jstree().get_node(data.node.children[0]));
+						  		var position = 'last';
+						  		
+						  		$http.get(databasesSvcUrl + '/' + $scope.selectedDatabase + '/' + $scope.selectedDatasource
+						  			+ '/' + schemaParent.text + '/' + tableParent.text)
+									.success(function(data) {
+										data.indices.forEach(function(index) {
+											var nodeText = index.name;
+  											var newNode = { state: "open", "text": nodeText, "id": index.name, "icon": "fa fa-sort-amount-desc"};
+  											var child = $('.database').jstree("create_node", parent, newNode, position, false, false);
+										})
+									});
 						  	}
+						  	
 							//data.instance.set_icon(data.node, 'fa fa-folder-open-o');
 						  })
 						  .on('close_node.jstree', function(evt, data) {
