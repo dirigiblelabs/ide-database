@@ -237,6 +237,10 @@ angular.module('database', []).controller('DatabaseController', function ($scope
 		messageHub.post($scope.selectedDatasource, 'database.datasource.selection.changed');
 		$scope.refreshDatabase();
 	};
+	
+	$scope.runSQL = function(evt) {
+		messageHub.post({}, 'database.sql.run');
+	};
 
 });
 	
