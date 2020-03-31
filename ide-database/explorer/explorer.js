@@ -110,7 +110,7 @@ angular.module('database', []).controller('DatabaseController', function ($scope
 												"action": function(data){
 													var tree = $.jstree.reference(data.reference);
 													var node = tree.get_node(data.reference);
-													var sqlCommand = "SELECT * FROM " + node.original.text;
+													var sqlCommand = "SELECT * FROM \"" + node.original.text + "\"";
 													messageHub.post({data: sqlCommand}, 'database.sql.execute');
 												}.bind(this)
 											};
