@@ -124,9 +124,11 @@ angular.module('database', []).controller('DatabaseController', function ($scope
 													"action": function(data){
 														var tree = $.jstree.reference(data.reference);
 														var node = tree.get_node(data.reference);
-														var sqlCommand = "DROP TABLE \"" + node.original.text + "\"";
-														messageHub.post({data: sqlCommand}, 'database.sql.execute');
-														$('.database').jstree(true).refresh();
+														if (confirmRemove("TABLE", node.original.text)) {
+															var sqlCommand = "DROP TABLE \"" + node.original.text + "\"";
+															messageHub.post({data: sqlCommand}, 'database.sql.execute');
+															$('.database').jstree(true).refresh();
+														}
 													}.bind(this)
 												};
 											}
@@ -138,9 +140,11 @@ angular.module('database', []).controller('DatabaseController', function ($scope
 													"action": function(data){
 														var tree = $.jstree.reference(data.reference);
 														var node = tree.get_node(data.reference);
-														var sqlCommand = "DROP VIEW \"" + node.original.text + "\"";
-														messageHub.post({data: sqlCommand}, 'database.sql.execute');
-														$('.database').jstree(true).refresh();
+														if (confirmRemove("VIEW", node.original.text)) {
+															var sqlCommand = "DROP VIEW \"" + node.original.text + "\"";
+															messageHub.post({data: sqlCommand}, 'database.sql.execute');
+															$('.database').jstree(true).refresh();
+														}
 													}.bind(this)
 												};
 											}
@@ -294,4 +298,7 @@ angular.module('database', []).controller('DatabaseController', function ($scope
 	};
 
 });
-	
+
+function confirmRemove(type, name) {
+	return confirm("Do you really want to delete the " + type + ": " + name);
+}
