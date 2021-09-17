@@ -8,12 +8,12 @@
  * Contributors:
  *   SAP - initial API and implementation
  */
-exports.getTemplate = function() {
-	var template = {
-			"name":"database-table",
-			"label":"Database Table",
-			"extension":"table",
-			"data":'{"name":"MYTABLE","type":"TABLE","columns":[{"name":"ID","type":"INTEGER","length":"0","nullable":"false","primaryKey":"true","defaultValue":""}]}'
+exports.getTemplate = function () {
+	let template = {
+		"name": "database-table",
+		"label": "Database Table",
+		"extension": "table",
+		"data": '{"name":"MYTABLE","type":"TABLE","columns":[{"name":"ID","type":"INTEGER","length":"0","nullable":"false","primaryKey":"true","defaultValue":""}]}'
 	};
 	return template;
 };

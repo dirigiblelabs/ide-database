@@ -8,14 +8,14 @@
  * Contributors:
  *   SAP - initial API and implementation
  */
-exports.getView = function() {
-	var view = {
-			"id":"database",
-			"name":"Database",
-			"factory":"frame",
-			"region":"left-top",
-			"label":"Database",
-			"link":"../ide-database/explorer/explorer.html"
+exports.getView = function () {
+	let view = {
+		"id": "database",
+		"name": "Database",
+		"factory": "frame",
+		"region": "left-top",
+		"label": "Database",
+		"link": "../ide-database/explorer/explorer.html"
 	};
 	return view;
 }

@@ -8,20 +8,20 @@
  * Contributors:
  *   SAP - initial API and implementation
  */
-exports.getMenu = function() {
-	var menu = {
-			"name":"Database",
-			"link":"#",
-			"order":"100",
-			"onClick":"alert('Database has been clicked')",
-			"items":[
-				{
-					"name":"Properties",
-					"link":"#",
-					"order":"110",
-					"onClick":"alert('Properties has been clicked')"
-				}
-			]
-		};
+exports.getMenu = function () {
+	let menu = {
+		"name": "Database",
+		"link": "#",
+		"order": "100",
+		"onClick": "alert('Database has been clicked')",
+		"items": [
+			{
+				"name": "Properties",
+				"link": "#",
+				"order": "110",
+				"onClick": "alert('Properties has been clicked')"
+			}
+		]
+	};
 	return menu;
 }

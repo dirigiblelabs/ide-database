@@ -8,12 +8,12 @@
  * Contributors:
  *   SAP - initial API and implementation
  */
-exports.getPerspective = function() {
-	var perspective = {
-			"name":"Database",
-			"link":"../ide-database/index.html",
-			"order":"110",
-			"image":"database"
+exports.getPerspective = function () {
+	let perspective = {
+		"name": "Database",
+		"link": "../ide-database/index.html",
+		"order": "110",
+		"image": "database"
 	};
 	return perspective;
 }
