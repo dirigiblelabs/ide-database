@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2010-2021 SAP SE or an SAP affiliate company and Eclipse Dirigible contributors
+ * Copyright (c) 2021 SAP SE or an SAP affiliate company and Eclipse Dirigible contributors
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v20.html
  *
- * SPDX-FileCopyrightText: 2010-2021 SAP SE or an SAP affiliate company and Eclipse Dirigible contributors
+ * SPDX-FileCopyrightText: 2021 SAP SE or an SAP affiliate company and Eclipse Dirigible contributors
  * SPDX-License-Identifier: EPL-2.0
  */
 let messageHub = new FramesMessageHub();
@@ -24,23 +24,23 @@ angular.module('database', []).controller('DatabaseController', function ($scope
 	function getDatabases() {
 		$http.get(databasesSvcUrl)
 			.then(function (data) {
-				$scope.databases = data;
-				if (data.length > 0) {
+				$scope.databases = data.data;
+				if ($scope.databases.length > 0) {
 					let storedDatabase = JSON.parse(localStorage.getItem('DIRIGIBLE.database'));
 					if (storedDatabase !== null) {
 						$scope.selectedDatabase = storedDatabase.type;
 					} else {
-						$scope.selectedDatabase = data[0];
+						$scope.selectedDatabase = $scope.databases[0];
 					}
 					if ($scope.selectedDatabase) {
 						messageHub.post($scope.selectedDatabase, 'database.database.selection.changed');
 						$http.get(databasesSvcUrl + "/" + $scope.selectedDatabase).then(function (data) {
-							$scope.datasources = data;
-							if (data.length > 0) {
+							$scope.datasources = data.data;
+							if ($scope.datasources.length > 0) {
 								if (storedDatabase !== null) {
 									$scope.selectedDatasource = storedDatabase.name;
 								} else {
-									$scope.selectedDatasource = data[0];
+									$scope.selectedDatasource = $scope.datasources[0];
 								}
 								if ($scope.selectedDatasource) {
 									messageHub.post($scope.selectedDatasource, 'database.datasource.selection.changed');
@@ -58,7 +58,7 @@ angular.module('database', []).controller('DatabaseController', function ($scope
 		if ($scope.selectedDatabase && $scope.selectedDatasource) {
 			$http.get(databasesSvcUrl + '/' + $scope.selectedDatabase + '/' + $scope.selectedDatasource)
 				.then(function (data) {
-					$scope.datasource = data;
+					$scope.datasource = data.data;
 					this.baseUrl = databasesSvcUrl + '/' + $scope.selectedDatabase + '/' + $scope.selectedDatasource;
 					let schemas = $scope.datasource.schemas.map(function (schemas) {
 						return build(schemas);
@@ -194,7 +194,7 @@ angular.module('database', []).controller('DatabaseController', function ($scope
 									$http.get(databasesSvcUrl + '/' + $scope.selectedDatabase + '/' + $scope.selectedDatasource
 										+ '/' + schemaParent.text + '/' + tableParent.text + "?kind=" + tableParent.original.kind.toUpperCase())
 										.then(function (data) {
-											data.columns.forEach(function (column) {
+											data.data.columns.forEach(function (column) {
 												let icon = "fa fa-th-large";
 												if (column.key) {
 													icon = "fa fa-key";
@@ -258,7 +258,7 @@ angular.module('database', []).controller('DatabaseController', function ($scope
 									$http.get(databasesSvcUrl + '/' + $scope.selectedDatabase + '/' + $scope.selectedDatasource
 										+ '/' + schemaParent.text + '/' + tableParent.text)
 										.then(function (data) {
-											data.indices.forEach(function (index) {
+											data.data.indices.forEach(function (index) {
 												let nodeText = index.name;
 												let newNode = { state: "open", "text": nodeText, "id": parent.id + "$" + index.name, "icon": "fa fa-list-ul" };
 												let child = $('.database').jstree("create_node", parent, newNode, position, false, false);
@@ -359,9 +359,9 @@ angular.module('database', []).controller('DatabaseController', function ($scope
 	$scope.databaseChanged = function (evt) {
 		$http.get(databasesSvcUrl + '/' + $scope.selectedDatabase)
 			.then(function (data) {
-				$scope.datasources = data;
-				if (data[0]) {
-					$scope.selectedDatasource = data[0];
+				$scope.datasources = data.data;
+				if ($scope.datasources[0]) {
+					$scope.selectedDatasource = $scope.datasources[0];
 					messageHub.post($scope.selectedDatabase, 'database.database.selection.changed');
 					messageHub.post($scope.selectedDatasource, 'database.datasource.selection.changed');
 					$scope.datasourceChanged();
