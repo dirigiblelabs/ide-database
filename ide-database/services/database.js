@@ -9,11 +9,11 @@
  *   SAP - initial API and implementation
  */
 exports.getPerspective = function () {
-	let perspective = {
-		"name": "Database",
-		"link": "../ide-database/index.html",
-		"order": "110",
-		"image": "database"
+	return {
+		name: "Database",
+		link: "../ide-database/index.html",
+		order: "110",
+		image: "database", // deprecated
+		icon: "../ide-database/images/database.svg",
 	};
-	return perspective;
 }
