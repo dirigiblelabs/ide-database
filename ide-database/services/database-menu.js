@@ -10,14 +10,11 @@
  */
 exports.getMenu = function () {
 	let menu = {
-		"name": "Database",
-		"link": "#",
-		"order": "100",
-		"onClick": "alert('Database has been clicked')",
+		"label": "Database",
+		"order": "1",
 		"items": [
 			{
-				"name": "Properties",
-				"link": "#",
+				"label": "Properties",
 				"order": "110",
 				"onClick": "alert('Properties has been clicked')"
 			}
