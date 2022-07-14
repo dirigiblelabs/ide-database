@@ -8,8 +8,6 @@
  * Contributors:
  *   SAP - initial API and implementation
  */
-
-
 const perspectiveData = {
 	id: "database",
 	name: "Database",
