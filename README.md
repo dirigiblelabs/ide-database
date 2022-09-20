@@ -1,7 +1,7 @@
 # Database Plugins for Eclipse Dirigible WebIDE
 
 [![Eclipse License](http://img.shields.io/badge/license-Eclipse-brightgreen.svg)](LICENSE)
-[![GitHub contributors](https://img.shields.io/github/contributors/dirigiblelabs/ide-database.svg)](https://github.com/dirigiblelabs/resources-core/graphs/contributors)
+[![GitHub contributors](https://img.shields.io/github/contributors/dirigiblelabs/ide-database.svg)](https://github.com/dirigiblelabs/ide-database/graphs/contributors)
 
 # Overview
 
