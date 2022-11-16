@@ -1,21 +1,23 @@
 /*
- * Copyright (c) 2010-2020 SAP and others.
+ * Copyright (c) 2022 SAP SE or an SAP affiliate company and Eclipse Dirigible contributors
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v20.html
  *
- * Contributors:
- *   SAP - initial API and implementation
+ * SPDX-FileCopyrightText: 2022 SAP SE or an SAP affiliate company and Eclipse Dirigible contributors
+ * SPDX-License-Identifier: EPL-2.0
  */
-exports.getView = function () {
-	let view = {
-		"id": "database",
-		"name": "Database",
-		"factory": "frame",
-		"region": "left-top",
-		"label": "Database",
-		"link": "../ide-database/explorer/explorer.html"
-	};
-	return view;
+const viewData = {
+	id: "database",
+	label: "Database",
+	factory: "frame",
+	region: "left",
+	link: "../ide-database/explorer/explorer.html"
+};
+if (typeof exports !== 'undefined') {
+	exports.getView = function () {
+		return viewData;
+	}
 }
