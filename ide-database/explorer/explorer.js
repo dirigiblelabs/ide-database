@@ -162,7 +162,7 @@ database.controller('DatabaseController', function ($scope, $http, messageHub) {
 
 					// Generate scripts
 					debugger
-					let tree = $('#dgDatabases').jstree();
+					let tree = $scope.jstreeWidget.jstree(true);
 					let columnsMaybe = tree.get_node(node.children[0]);
 					let internalMaybe = null;
 					if (columnsMaybe) {
