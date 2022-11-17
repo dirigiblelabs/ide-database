@@ -18,8 +18,13 @@ database.controller('DatabaseController', function ($scope, $http, messageHub) {
 	let databasesSvcUrl = "/services/v4/ide/databases";
 	$scope.selectedDatabase;
 	$scope.jstreeWidget = angular.element('#dgDatabases');
-	$scope.spinnerObj = {
-		text: "Loading...",
+	$scope.spinnerColumns = {
+		text: "Loading Columns...",
+		type: "spinner",
+		li_attr: { spinner: true },
+	};
+	$scope.spinnerIndices = {
+		text: "Loading Indices...",
 		type: "spinner",
 		li_attr: { spinner: true },
 	};
@@ -154,14 +159,14 @@ database.controller('DatabaseController', function ($scope, $http, messageHub) {
 						"action": function (data) {
 							let tree = $.jstree.reference(data.reference);
 							let node = tree.get_node(data.reference);
-							let parentNodeName = tree.get_node(node.parent).text;
+							let parentNodeName = tree.get_text(node.parent);
 							let sqlCommand = "SELECT * FROM \"" + parentNodeName + "\"" + "." + "\"" + node.original.text + "\"";
 							messageHub.postMessage('database.sql.execute', sqlCommand);
 						}.bind(this)
 					};
 
 					// Generate scripts
-					debugger
+					// debugger
 					let tree = $scope.jstreeWidget.jstree(true);
 					let columnsMaybe = tree.get_node(node.children[0]);
 					let internalMaybe = null;
@@ -170,14 +175,14 @@ database.controller('DatabaseController', function ($scope, $http, messageHub) {
 					}
 					// Select
 					if ((node.original.type === 'table' || node.original.type === 'base table' || node.original.type === 'view')
-						&& (internalMaybe !== null && internalMaybe.original !== "Loading Columns..." && internalMaybe.original !== "Loading Indices...")) {
+						&& (internalMaybe !== null && internalMaybe.text !== "Loading Columns..." && internalMaybe.text !== "Loading Indices...")) {
 						ctxmenu.selectScript = {
 							"separator_before": true,
 							"label": "Select",
 							"action": function (data) {
 								let tree = $.jstree.reference(data.reference);
 								let node = tree.get_node(data.reference);
-								let parentNodeName = tree.get_node(node.parent).text;
+								let parentNodeName = tree.get_text(node.parent);
 								let columns = tree.get_node(node.children[0]);
 								let sqlCommand = "SELECT ";
 								for (let i = 0; i < columns.children.length; i++) {
@@ -195,14 +200,14 @@ database.controller('DatabaseController', function ($scope, $http, messageHub) {
 
 					// Insert
 					if ((node.original.type === 'table' || node.original.type === 'base table')
-						&& (internalMaybe !== null && internalMaybe.original !== "Loading Columns..." && internalMaybe.original !== "Loading Indices...")) {
+						&& (internalMaybe !== null && internalMaybe.text !== "Loading Columns..." && internalMaybe.text !== "Loading Indices...")) {
 						ctxmenu.insertScript = {
 							"separator_before": false,
 							"label": "Insert",
 							"action": function (data) {
 								let tree = $.jstree.reference(data.reference);
 								let node = tree.get_node(data.reference);
-								let parentNodeName = tree.get_node(node.parent).text;
+								let parentNodeName = tree.get_text(node.parent);
 								let columns = tree.get_node(node.children[0]);
 								let sqlCommand = "INSERT INTO \"" + parentNodeName + "\"" + "." + "\"" + node.original.text + "\" (";
 								for (let i = 0; i < columns.children.length; i++) {
@@ -226,14 +231,14 @@ database.controller('DatabaseController', function ($scope, $http, messageHub) {
 
 					// Update
 					if ((node.original.type === 'table' || node.original.type === 'base table')
-						&& (internalMaybe !== null && internalMaybe.original !== "Loading Columns..." && internalMaybe.original !== "Loading Indices...")) {
+						&& (internalMaybe !== null && internalMaybe.text !== "Loading Columns..." && internalMaybe.text !== "Loading Indices...")) {
 						ctxmenu.updateScript = {
 							"separator_before": false,
 							"label": "Update",
 							"action": function (data) {
 								let tree = $.jstree.reference(data.reference);
 								let node = tree.get_node(data.reference);
-								let parentNodeName = tree.get_node(node.parent).text;
+								let parentNodeName = tree.get_text(node.parent);
 								let columns = tree.get_node(node.children[0]);
 								let sqlCommand = "UPDATE \"" + parentNodeName + "\"" + "." + "\"" + node.original.text + "\" SET ";
 								for (let i = 0; i < columns.children.length; i++) {
@@ -258,14 +263,14 @@ database.controller('DatabaseController', function ($scope, $http, messageHub) {
 
 					// Delete
 					if ((node.original.type === 'table' || node.original.type === 'base table')
-						&& (internalMaybe !== null && internalMaybe.original !== "Loading Columns..." && internalMaybe.original !== "Loading Indices...")) {
+						&& (internalMaybe !== null && internalMaybe.text !== "Loading Columns..." && internalMaybe.text !== "Loading Indices...")) {
 						ctxmenu.deleteScript = {
 							"separator_before": false,
 							"label": "Delete",
 							"action": function (data) {
 								let tree = $.jstree.reference(data.reference);
 								let node = tree.get_node(data.reference);
-								let parentNodeName = tree.get_node(node.parent).text;
+								let parentNodeName = tree.get_text(node.parent);
 								let columns = tree.get_node(node.children[0]);
 								let sqlCommand = "DELETE FROM \"" + parentNodeName + "\"" + "." + "\"" + node.original.text + "\"";
 								sqlCommand += " WHERE ";
@@ -290,7 +295,7 @@ database.controller('DatabaseController', function ($scope, $http, messageHub) {
 							"action": function (data) {
 								let tree = $.jstree.reference(data.reference);
 								let node = tree.get_node(data.reference);
-								let parentNodeName = tree.get_node(node.parent).text;
+								let parentNodeName = tree.get_text(node.parent);
 								let sqlCommand = "DROP TABLE \"" + parentNodeName + "\"" + "." + "\"" + node.original.text + "\"";
 								messageHub.postMessage('database.sql.script', sqlCommand);
 							}.bind(this)
@@ -304,13 +309,12 @@ database.controller('DatabaseController', function ($scope, $http, messageHub) {
 							"action": function (data) {
 								let tree = $.jstree.reference(data.reference);
 								let node = tree.get_node(data.reference);
-								let parentNodeName = tree.get_node(node.parent).text;
+								let parentNodeName = tree.get_text(node.parent);
 								let sqlCommand = "DROP VIEW \"" + parentNodeName + "\"" + "." + "\"" + node.original.text + "\"";
 								messageHub.postMessage('database.sql.script', sqlCommand);
 							}.bind(this)
 						};
 					}
-
 
 					ctxmenu.exportData = {
 						"separator_before": true,
@@ -318,7 +322,7 @@ database.controller('DatabaseController', function ($scope, $http, messageHub) {
 						"action": function (data) {
 							let tree = $.jstree.reference(data.reference);
 							let node = tree.get_node(data.reference);
-							let parentNodeName = tree.get_node(node.parent).text;
+							let parentNodeName = tree.get_text(node.parent);
 							let sqlCommand = parentNodeName + "." + node.original.text;
 							messageHub.postMessage('database.data.export.artifact', sqlCommand);
 						}.bind(this)
@@ -329,7 +333,7 @@ database.controller('DatabaseController', function ($scope, $http, messageHub) {
 						"action": function (data) {
 							let tree = $.jstree.reference(data.reference);
 							let node = tree.get_node(data.reference);
-							let parentNodeName = tree.get_node(node.parent).text;
+							let parentNodeName = tree.get_text(node.parent);
 							let sqlCommand = parentNodeName + "." + node.original.text;
 							messageHub.postMessage('database.metadata.export.artifact', sqlCommand);
 						}.bind(this)
@@ -379,17 +383,17 @@ database.controller('DatabaseController', function ($scope, $http, messageHub) {
 		}
 	};
 
-	$scope.jstreeWidget.on('dblclick.jstree', function (event, node) {
+	/*$scope.jstreeWidget.on('dblclick.jstree', function (event, node) {
 		let data = $scope.jstreeWidget.jstree(true).get_selected(true);
 		let kind = $scope.jstreeWidget.jstree(true).get_node(event.target).original.kind;
 		// if(['table'].indexOf(type)<0)
 		// 								messageHub.fireFileOpen(data[0].original._file);
-	});
+	});*/
 
 	$scope.jstreeWidget.on('open_node.jstree', function (event, data) {
-		if (data.node.children.length === 1 && $scope.jstreeWidget.jstree(true).get_node(data.node.children[0]).original === "Loading Columns...") {
+		if (data.node.children.length === 1 && $scope.jstreeWidget.jstree(true).get_text(data.node.children[0]) === "Loading Columns...") {
 			expandColumns(event, data);
-		} else if (data.node.children.length === 1 && $scope.jstreeWidget.jstree(true).get_node(data.node.children[0]).original === "Loading Indices...") {
+		} else if (data.node.children.length === 1 && $scope.jstreeWidget.jstree(true).get_text(data.node.children[0]) === "Loading Indices...") {
 			expandIndices(event, data);
 		}
 	});
@@ -399,14 +403,6 @@ database.controller('DatabaseController', function ($scope, $http, messageHub) {
 
 	// $scope.jstreeWidget.on('close_node.jstree', function (event) {
 	// });
-
-	function showSpinner(parent) {
-		return $scope.jstreeWidget.jstree(true).create_node(parent, $scope.spinnerObj, 0);
-	}
-
-	function hideSpinner(spinnerId) {
-		$scope.jstreeWidget.jstree(true).delete_node($scope.jstreeWidget.jstree(true).get_node(spinnerId));
-	}
 
 	function getDatabases(setConfig = false) {
 		$http.get(databasesSvcUrl)
@@ -444,13 +440,13 @@ database.controller('DatabaseController', function ($scope, $http, messageHub) {
 	let expandColumns = function (evt, data) {
 		let parent = $scope.jstreeWidget.jstree(true).get_node(data.node);
 		let tableParent = $scope.jstreeWidget.jstree(true).get_node(data.node.parent);
-		let schemaParent = $scope.jstreeWidget.jstree(true).get_node(tableParent.parent);
+		let schemaParent = $scope.jstreeWidget.jstree(true).get_text(tableParent.parent);
 
 		$scope.jstreeWidget.jstree("delete_node", $scope.jstreeWidget.jstree(true).get_node(data.node.children[0]));
 		let position = 'last';
 
 		$http.get(databasesSvcUrl + '/' + $scope.selectedDatabase + '/' + $scope.selectedDatasource
-			+ '/' + schemaParent.text + '/' + tableParent.text + "?kind=" + tableParent.original.kind.toUpperCase())
+			+ '/' + schemaParent + '/' + tableParent.text + "?kind=" + tableParent.original.kind.toUpperCase())
 			.then(function (data) {
 				data.data.columns.forEach(function (column) {
 					let icon = "sap-icon--grid";
@@ -458,10 +454,9 @@ database.controller('DatabaseController', function ($scope, $http, messageHub) {
 						icon = "sap-icon--key";
 					} else {
 						switch (column.type.toLowerCase()) {
+							case "character varying":
 							case "varchar":
 							case "nvarchar":
-								icon = "sap-icon--sort-ascending";
-								break;
 							case "char":
 								icon = "sap-icon--text";
 								break;
@@ -472,6 +467,7 @@ database.controller('DatabaseController', function ($scope, $http, messageHub) {
 							case "timestamp":
 								icon = "sap-icon--date-time";
 								break;
+							case "bigint":
 							case "smallint":
 							case "tinyint":
 							case "integer":
@@ -479,14 +475,12 @@ database.controller('DatabaseController', function ($scope, $http, messageHub) {
 								break;
 							case "float":
 							case "double":
+							case "double precision":
 							case "decimal":
 								icon = "sap-icon--measuring-point"
 								break;
-							case "bigint":
-								icon = "sap-icon--trend-up";
-								break;
 							case "boolean":
-								icon = "sap-icon--checklist-item";
+								icon = "sap-icon--sys-enter";
 								break;
 							case "clob":
 							case "blob":
@@ -502,7 +496,7 @@ database.controller('DatabaseController', function ($scope, $http, messageHub) {
 						column: column,
 						icon: icon
 					};
-					let child = $scope.jstreeWidget.jstree("create_node", parent, newNode, position, false, false);
+					$scope.jstreeWidget.jstree("create_node", parent, newNode, position, false, false);
 				})
 			});
 	}
@@ -510,18 +504,18 @@ database.controller('DatabaseController', function ($scope, $http, messageHub) {
 	let expandIndices = function (evt, data) {
 		let parent = $scope.jstreeWidget.jstree(true).get_node(data.node);
 		let tableParent = $scope.jstreeWidget.jstree(true).get_node(data.node.parent);
-		let schemaParent = $scope.jstreeWidget.jstree(true).get_node(tableParent.parent);
+		let schemaParent = $scope.jstreeWidget.jstree(true).get_text(tableParent.parent);
 
 		$scope.jstreeWidget.jstree("delete_node", $scope.jstreeWidget.jstree(true).get_node(data.node.children[0]));
 		let position = 'last';
 
 		$http.get(databasesSvcUrl + '/' + $scope.selectedDatabase + '/' + $scope.selectedDatasource
-			+ '/' + schemaParent.text + '/' + tableParent.text)
+			+ '/' + schemaParent + '/' + tableParent.text)
 			.then(function (data) {
 				data.data.indices.forEach(function (index) {
 					let nodeText = index.name;
 					let newNode = { state: "open", "text": nodeText, "id": parent.id + "$" + index.name, "icon": "sap-icon--bullet-text" };
-					let child = $scope.jstreeWidget.jstree("create_node", parent, newNode, position, false, false);
+					$scope.jstreeWidget.jstree("create_node", parent, newNode, position, false, false);
 				})
 			});
 	}
@@ -627,7 +621,6 @@ database.controller('DatabaseController', function ($scope, $http, messageHub) {
 		let icon = 'sap-icon--grid';
 		let name = f.name;
 		if (f.kind == 'schema') {
-
 			let tablesChildren = f.tables.map(function (_table) {
 				return build(_table)
 			});
@@ -645,42 +638,32 @@ database.controller('DatabaseController', function ($scope, $http, messageHub) {
 
 			icon = 'sap-icon--database';
 		} else if (f.kind == 'table' && (f.type === 'TABLE' || f.type === 'BASE TABLE')) {
-			//children = ['Loading...'];
 			children = [
-				{ text: "Columns", "icon": "sap-icon--table-column", children: ['Loading Columns...'] },
-				{ text: "Indices", "icon": "sap-icon--table-row", children: ['Loading Indices...'] },
+				{ text: "Columns", "icon": "sap-icon--table-column", children: [$scope.spinnerColumns] },
+				{ text: "Indices", "icon": "sap-icon--table-row", children: [$scope.spinnerIndices] },
 			];
-
 			icon = 'sap-icon--table-view';
 		} else if (f.kind == 'table' && f.type === 'VIEW') {
-			//children = ['Loading...'];
 			children = [
-				{ text: "Columns", "icon": "sap-icon--table-column", children: ['Loading Columns...'] },
-				{ text: "Indices", "icon": "sap-icon--table-row", children: ['Loading Indices...'] },
+				{ text: "Columns", "icon": "sap-icon--table-column", children: [$scope.spinnerColumns] },
+				{ text: "Indices", "icon": "sap-icon--table-row", children: [$scope.spinnerIndices] },
 			];
-
 			icon = 'sap-icon--grid';
 		} else if (f.kind == 'table' && f.type !== 'TABLE' && f.type !== 'VIEW') {
-			//children = ['Loading...'];
 			children = [
-				{ text: "Columns", "icon": "sap-icon--table-column", children: ['Loading Columns...'] },
-				{ text: "Indices", "icon": "sap-icon--table-row", children: ['Loading Indices...'] },
+				{ text: "Columns", "icon": "sap-icon--table-column", children: [$scope.spinnerColumns] },
+				{ text: "Indices", "icon": "sap-icon--table-row", children: [$scope.spinnerIndices] },
 			];
-
 			icon = 'sap-icon--locked';
 		} else if (f.kind == 'procedure') { // && f.type === 'XXX'
-			//children = ['Loading...'];
 			children = [
-				{ text: "Columns", "icon": "sap-icon--table-column", children: ['Loading Columns...'] },
+				{ text: "Columns", "icon": "sap-icon--table-column", children: [$scope.spinnerColumns] },
 			];
-
 			icon = 'sap-icon--workflow-tasks';
 		} else if (f.kind == 'function') { // && f.type === 'XXX'
-			//children = ['Loading...'];
 			children = [
-				{ text: "Columns", "icon": "sap-icon--table-column", children: ['Loading Columns...'] },
+				{ text: "Columns", "icon": "sap-icon--table-column", children: [$scope.spinnerColumns] },
 			];
-
 			icon = 'sap-icon--settings';
 		} else if (f.kind == 'column') {
 			icon = 'sap-icon--grid';
